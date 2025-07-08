@@ -15,7 +15,7 @@ type Uploader interface {
 // S3 对象存储接口
 type S3 interface {
 	Uploader
-	GetFilename(key string, timestamp ...int64) (string, string)
+	GetFilename(key string) (string, string)
 
 	UploadFileV2(name string, bs []byte, ct string) (string, string, error)
 	//UploadFile(file *multipart.FileHeader) (string, string, error)

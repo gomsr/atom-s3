@@ -3,7 +3,9 @@ package uploader
 import (
 	"fmt"
 	"github.com/gomsr/atom-s3/configs3"
+	"strings"
 	"testing"
+	"time"
 )
 
 func TestR2S3Client(t *testing.T) {
@@ -28,6 +30,11 @@ func TestR2S3Client(t *testing.T) {
 	fmt.Println(preSigned)
 }
 
+func TestFmt(t *testing.T) {
+	a := strings.ReplaceAll("%s/%s.sada.ewe", "%s", time.Now().Format(time.DateOnly))
+	fmt.Println(a)
+}
+
 func Test_awsS3Client_UploadFile(t *testing.T) {
 
 }
@@ -35,7 +42,7 @@ func Test_awsS3Client_UploadFile(t *testing.T) {
 func TestOssS3Client(t *testing.T) {
 	s3, err := NewS3Client(&configs3.AwsS3{
 		S3: configs3.S3{
-			Endpoint:  "https://oss-cn-hangzhou.aliyuncs.com",
+			Endpoint:  "http://oss-cn-hangzhou.aliyuncs.com",
 			Bucket:    "project-ec",
 			Region:    "hangzhou",
 			SecretID:  "xx",

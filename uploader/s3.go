@@ -15,6 +15,7 @@ import (
 	"log"
 	"mime/multipart"
 	"path"
+	"strings"
 	"time"
 )
 
@@ -27,12 +28,10 @@ func (c *awsS3Client) CdnHost() string {
 	return c.BaseURL
 }
 
-func (c *awsS3Client) GetFilename(key string, timestamp ...int64) (string, string) {
-	var fileKey string
-	if len(timestamp) > 0 {
-		fileKey = fmt.Sprintf("%d_%s", time.Now().Unix(), key)
-	} else {
-		fileKey = fmt.Sprintf("%s", key)
+func (c *awsS3Client) GetFilename(fileKey string) (string, string) {
+	now := time.Now()
+	if !c.NoTimestamp {
+		fileKey = fmt.Sprintf("%d_%s", now.Unix(), fileKey)
 	}
 
 	var filename string
@@ -42,13 +41,13 @@ func (c *awsS3Client) GetFilename(key string, timestamp ...int64) (string, strin
 		filename = c.PathPrefix + "/" + fileKey
 	}
 
-	return fileKey, filename
+	return fileKey, strings.ReplaceAll(filename, "%s", time.Now().Format(time.DateOnly))
 }
 
 // Deprecated: use PreSigned
 // @see https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/s3-example-basic-bucket-operations.html#s3-examples-bucket-ops-upload-file-to-bucket
 func (c *awsS3Client) UploadFile(file *multipart.FileHeader) (string, string, error) {
-	fileKey, filename := c.GetFilename(file.Filename, time.Now().Unix())
+	fileKey, filename := c.GetFilename(file.Filename)
 	reader, err := file.Open()
 	if err != nil {
 		return "", "", err
@@ -73,7 +72,7 @@ func (c *awsS3Client) UploadFile(file *multipart.FileHeader) (string, string, er
 // Deprecated: use PreSigned
 // @see https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/s3-example-basic-bucket-operations.html#s3-examples-bucket-ops-upload-file-to-bucket
 func (c *awsS3Client) UploadFileV2(name string, bs []byte, ct string) (string, string, error) {
-	fileKey, filename := c.GetFilename(name, time.Now().Unix())
+	fileKey, filename := c.GetFilename(name)
 
 	_, err := c.Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(c.Bucket),
@@ -124,7 +123,7 @@ func (c *awsS3Client) DeleteFile(key string) error {
 }
 
 func (c *awsS3Client) PreSigned(key string) (*v4.PresignedHTTPRequest, error) {
-	_, filename := c.GetFilename(key, time.Now().Unix())
+	_, filename := c.GetFilename(key)
 
 	in := &s3.PutObjectInput{
 		Bucket: aws.String(c.Bucket),

@@ -6,12 +6,13 @@ type Local struct {
 }
 
 type S3 struct {
-	Endpoint  string `mapstructure:"endpoint" json:"endpoint" yaml:"endpoint"`
-	Bucket    string `mapstructure:"bucket" json:"bucket" yaml:"bucket"`
-	Region    string `mapstructure:"region" json:"region,optional" yaml:"region"`
-	SecretID  string `mapstructure:"secret-id" json:"secret-id" yaml:"secret-id"`
-	SecretKey string `mapstructure:"secret-key" json:"secret-key" yaml:"secret-key"`
-	BaseURL   string `mapstructure:"base-url" json:"base-url" yaml:"base-url"`
+	Endpoint    string `mapstructure:"endpoint" json:"endpoint" yaml:"endpoint"`
+	Bucket      string `mapstructure:"bucket" json:"bucket" yaml:"bucket"`
+	Region      string `mapstructure:"region" json:"region,optional" yaml:"region"`
+	SecretID    string `mapstructure:"secret-id" json:"secret-id" yaml:"secret-id"`
+	SecretKey   string `mapstructure:"secret-key" json:"secret-key" yaml:"secret-key"`
+	BaseURL     string `mapstructure:"base-url" json:"base-url" yaml:"base-url"`
+	NoTimestamp bool   `mapstructure:"no-timestamp" json:"no-timestamp,optional" yaml:"no-timestamp"`
 }
 
 type AwsS3 struct {
